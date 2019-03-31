@@ -67,7 +67,7 @@ public class broker {
 	
 	public ArrayList readBusLines() {
 		try{ 
-		    FileReader in = new FileReader("C:\\Users\\xristos\\Documents\\Eclipse Workspace\\DS_Part1\\src\\busLinesNew.txt");
+		    FileReader in = new FileReader("C:\\Users\\paras\\IdeaProjects\\DS-Part-A\\src\\busLinesNew.txt");
 		    BufferedReader br = new BufferedReader(in);
 		    ArrayList busIDs = new ArrayList();
 
