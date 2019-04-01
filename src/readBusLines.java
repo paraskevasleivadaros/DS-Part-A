@@ -1,13 +1,15 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Paths;
 
 public class readBusLines {
 
 	public static void main(String[] args) throws IOException {
 		try {
-
-			FileReader in = new FileReader("C:\\Users\\paras\\IdeaProjects\\DS-Part-A\\src\\busLinesNew.txt");
+			String path = Paths.get("src\\busLinesNew.txt").toAbsolutePath().toString();
+			// System.out.println(path);
+			FileReader in = new FileReader(path);
 			BufferedReader br = new BufferedReader(in);
 
 			String line;

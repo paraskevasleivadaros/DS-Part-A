@@ -1,5 +1,7 @@
 import java.io.*;
+import java.math.*;
 import java.net.*;
+import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
@@ -11,19 +13,56 @@ public class broker {
 	}
 	
 	public void openServer() throws IOException {
-		ServerSocket providerSocket = null;
+		ServerSocket providerSocket = new ServerSocket(1917);
 		Socket connection = null;
 		
-		providerSocket = new ServerSocket(1917);
-		
-		for (int i = 0; i < 2; i++) {
+		/*while(true) {
 			connection = providerSocket.accept();
 			
 			new myThread(connection).start();
-		}
+		}*/
+		
+		connection = new Socket("192.168.1.140", 1871);
+		new myThread(connection).start();
 	}
 	
 	private class myThread extends Thread {
+		Socket socket;
+		
+		public myThread(Socket socket) {
+			this.socket = socket;
+		}
+		
+		public void run() {
+			PrintStream out = null;
+			Scanner in = null;
+			
+			try {
+				out = new PrintStream(socket.getOutputStream());
+				in = new Scanner(socket.getInputStream());
+				
+				Socket requestSocket = new Socket("192.168.1.140", 1871);
+				PrintStream p_out = new PrintStream(requestSocket.getOutputStream());
+				Scanner p_in = new Scanner(requestSocket.getInputStream());
+				
+				String result;
+				
+				//p_out.println("1151");
+				//result = p_in.nextLine();
+				//System.out.println(result);
+				
+				p_out.println("821");
+				result = p_in.nextLine();
+				System.out.println(result);
+				
+				p_out.println("stop");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	/*private class myThread extends Thread {
 		Socket socket;
 		
 		public myThread(Socket socket) {
@@ -40,7 +79,8 @@ public class broker {
 				in = new Scanner(socket.getInputStream());
 				
 				busIDs = readBusLines();
-				System.out.println(busIDs);
+				
+				System.out.println(socket.getInetAddress().toString());
 				
 				String IPandPort = socket.getInetAddress().toString() + socket.getPort();
 				IPandPort = SHA1(IPandPort);
@@ -53,9 +93,9 @@ public class broker {
 				
 				System.out.println(brokerLines);
 				
-				/*System.out.println(busIDs);
+				System.out.println(busIDs);
 				System.out.println(in.nextLine());
-				System.out.println(in.nextLine());*/
+				System.out.println(in.nextLine());
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (NoSuchAlgorithmException e) {
@@ -63,18 +103,22 @@ public class broker {
 				e.printStackTrace();
 			}
 		}
-	}
-	
+	} */
+
+	String path = Paths.get("src\\busLinesNew.txt").toAbsolutePath().toString();
+	// System.out.println(path);
+
 	public ArrayList readBusLines() {
 		try{ 
-		    FileReader in = new FileReader("C:\\Users\\paras\\IdeaProjects\\DS-Part-A\\src\\busLinesNew.txt");
+		    FileReader in = new FileReader(path);
 		    BufferedReader br = new BufferedReader(in);
 		    ArrayList busIDs = new ArrayList();
 
 		    String line;
 		    String lineCode;
 		    while ((line = br.readLine()) != null) {
-		    	lineCode = line.substring(line.indexOf(',')+1, line.lastIndexOf(','));
+		    	//lineCode = line.substring(line.indexOf(',')+1, line.lastIndexOf(','));
+		    	lineCode = line.substring(0, line.indexOf(','));
 		    	busIDs.add(lineCode);
 		    }	
 		    in.close();
@@ -86,12 +130,8 @@ public class broker {
 	}
 	
 	public String SHA1 (String s) throws NoSuchAlgorithmException {
-		MessageDigest mDigest = MessageDigest.getInstance("SHA1");
-		byte[] result = mDigest.digest(s.getBytes());
-		StringBuffer sb = new StringBuffer();
-		for (int i = 0; i < result.length; i++) {
-			sb.append(Integer.toString((result[i] & 0xff) + 0x100, 16).substring(1));
-		}
-		return sb.toString();
+		MessageDigest mDigest = MessageDigest.getInstance("SHA-1");
+		mDigest.update(s.getBytes(), 0, s.length());
+		return new BigInteger(1, mDigest.digest()).toString();
 	}
 }
