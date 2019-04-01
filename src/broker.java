@@ -1,29 +1,52 @@
 import java.io.*;
 import java.math.*;
 import java.net.*;
-import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 public class broker {
+	
+	public static ArrayList br_bus;
+	public static String IP = "192.168.1.140";
 
 	public static void main(String[] args) throws IOException {
-		new broker().openServer();
+		String port = args[0];
+		
+		String[] busLines = {"021", "022", "024", "025", "026", "027", "032", "036", "040", "045", "049", "051", "054", "057", "060", "1", "10"};
+		
+		br_bus = new ArrayList();
+		
+		String hash = IP + port;
+		try {
+			hash = SHA1(hash);
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+		
+		for (int i = 0; i < busLines.length; i++) {	
+			try {
+				if(SHA1(busLines[i]).compareTo(hash) == -1) {
+					br_bus.add(busLines[i]);
+				}
+			} catch (NoSuchAlgorithmException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		System.out.println(br_bus);
+		//new broker().openServer();
 	}
 	
 	public void openServer() throws IOException {
 		ServerSocket providerSocket = new ServerSocket(1917);
 		Socket connection = null;
 		
-		/*while(true) {
+		while(true) {
 			connection = providerSocket.accept();
 			
 			new myThread(connection).start();
-		}*/
-		
-		connection = new Socket("localhost", 1871);
-		new myThread(connection).start();
+		}
 	}
 	
 	private class myThread extends Thread {
@@ -37,28 +60,48 @@ public class broker {
 			PrintStream out = null;
 			Scanner in = null;
 			
+			Socket requestSocket = null;
+			PrintStream p_out = null;
+			Scanner p_in = null;
+			
 			try {
 				out = new PrintStream(socket.getOutputStream());
 				in = new Scanner(socket.getInputStream());
 				
-				Socket requestSocket = new Socket("localhost", 1871);
-				PrintStream p_out = new PrintStream(requestSocket.getOutputStream());
-				Scanner p_in = new Scanner(requestSocket.getInputStream());
+				requestSocket = new Socket("192.168.1.140", 1871);
+				p_out = new PrintStream(requestSocket.getOutputStream());
+				p_in = new Scanner(requestSocket.getInputStream());
 				
-				String result;
+				String sub_msg;
+				String pub_msg;
 				
-				//p_out.println("1151");
-				//result = p_in.nextLine();
-				//System.out.println(result);
+				sub_msg = in.nextLine();
 				
-				p_out.println("821");
-				result = p_in.nextLine();
-				System.out.println(result);
+				p_out.println(sub_msg);
+				p_out.flush();
 				
-				p_out.println("stop");
+				do {
+					pub_msg = in.nextLine();
+					
+					out.println(pub_msg);
+					out.flush();
+				} while (in.nextLine().compareTo("stop") != 0);
+				
+				in.nextLine();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			
+			try {
+	            in.close();
+	            out.close();
+	            this.socket.close();
+	            p_in.close();
+	            p_out.close();
+	            requestSocket.close();
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	        }
 		}
 	}
 	
@@ -99,18 +142,14 @@ public class broker {
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (NoSuchAlgorithmException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 	} */
-
-	String path = Paths.get("src\\busLinesNew.txt").toAbsolutePath().toString();
-	// System.out.println(path);
-
-	public ArrayList readBusLines() {
+	
+	/*public ArrayList readBusLines() {
 		try{ 
-		    FileReader in = new FileReader(path);
+		    FileReader in = new FileReader("C:\\Users\\xristos\\Documents\\Eclipse Workspace\\DS_Part1\\src\\busLinesNew.txt");
 		    BufferedReader br = new BufferedReader(in);
 		    ArrayList busIDs = new ArrayList();
 
@@ -127,9 +166,9 @@ public class broker {
 			System.out.println("File Read Error");
 			return null;
 		}
-	}
+	}*/
 	
-	public String SHA1 (String s) throws NoSuchAlgorithmException {
+	public static String SHA1 (String s) throws NoSuchAlgorithmException {
 		MessageDigest mDigest = MessageDigest.getInstance("SHA-1");
 		mDigest.update(s.getBytes(), 0, s.length());
 		return new BigInteger(1, mDigest.digest()).toString();

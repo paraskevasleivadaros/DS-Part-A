@@ -1,11 +1,18 @@
 import java.io.*;
 import java.net.*;
-import java.nio.file.Paths;
 import java.util.*;
+import java.nio.file.Paths;
 
 public class publisher {
 
+	public static ArrayList busIDs;
+	String path = Paths.get("src\\busPositionsNew.txt").toAbsolutePath().toString();
+	
 	public static void main(String[] args) throws UnknownHostException, IOException {
+		busIDs = null;
+		for (int i = 0; i < args.length; i++) {
+			busIDs.add(args[i]);
+		}
 		new publisher().startPublisher();
 	}
 	
@@ -13,37 +20,18 @@ public class publisher {
 		ServerSocket publisherSocket = new ServerSocket(1871);
 		Socket requestSocket = null;
 		
-		/*for (int i = 0; i < 2; i++) {
-			ArrayList busIDs = readBusLines(i);
-			while (true) {
-				requestSocket = publisherSocket.accept();
-				
-				new myThread(requestSocket, busIDs).start();
-				System.out.println("lol");
-			}
-		}*/
-		
-		ArrayList busIDs = readBusLines(0);
 		while (true) {
 			requestSocket = publisherSocket.accept();
 			
-			new myThread(requestSocket, busIDs).start();
+			new myThread(requestSocket).start();
 		}
-		
-		/*for (int i = 0; i < 2; i++) {
-			requestSocket= new Socket(InetAddress.getByName("192.168.1.140"), 1917);
-			
-			new myThread(requestSocket, i).start();
-		}*/
 	}
 	
 	private class myThread extends Thread {
 		Socket socket;
-		ArrayList busIDs;
 		
-		public myThread(Socket socket, ArrayList busIDs) {
+		public myThread(Socket socket) {
 			this.socket = socket;
-			this.busIDs = busIDs;
 		}
 		
 		public void run() {
@@ -61,7 +49,28 @@ public class publisher {
 			
 			while (broker_message != "stop") {
 				if (busIDs.contains(broker_message)) {
-					out.println(readBusPositions(broker_message));
+					try{ 
+						FileReader in2 = new FileReader(path);
+						BufferedReader br = new BufferedReader(in2);
+
+						String line;
+						    
+						while ((line = br.readLine()) != null) {
+								String[] tokens = line.split(",");
+								if (tokens[0].compareTo(broker_message) == 0) {
+									out.println(tokens[3]+" " + tokens[4]);
+									out.flush();
+									sleep(500);
+								}
+						}
+						out.println("stop");
+						out.flush();
+						in2.close();
+					} catch (IOException e) {
+						System.out.println("File Read Error");
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 				} else {
 					out.println("Not found!");
 				}
@@ -105,13 +114,10 @@ public class publisher {
 			}
 		}
 	}*/
-
-	String path1 = Paths.get("src\\busLinesNew.txt").toAbsolutePath().toString();
-	// System.out.println(path);
-
-	public ArrayList readBusLines(int i) {
+	
+	/*public ArrayList readBusLines(int i) {
 		try{ 
-		    FileReader in = new FileReader(path1);
+		    FileReader in = new FileReader("C:\\Users\\xristos\\Documents\\Eclipse Workspace\\DS_Part1\\src\\busLinesNew.txt");
 		    BufferedReader br = new BufferedReader(in);
 		    ArrayList busIDs = new ArrayList();
 
@@ -131,13 +137,11 @@ public class publisher {
 			System.out.println("File Read Error");
 			return null;
 		}
-	}
+	}*/
 	
-	String path2 = Paths.get("src\\busPositionsNew.txt").toAbsolutePath().toString();
-	
-	public String readBusPositions(String busID) {
+	/*public String readBusPositions(String busID) {
 		try{ 
-			FileReader in = new FileReader(path2);
+			FileReader in = new FileReader("C:\\Users\\xristos\\Documents\\Eclipse Workspace\\DS_Part1\\src\\busPositionsNew.txt");
 			BufferedReader br = new BufferedReader(in);                 //reading coordinates
 
 			String line;
@@ -153,5 +157,5 @@ public class publisher {
 			System.out.println("File Read Error");
 		}
 		return null;
-	}
+	}*/
 }
