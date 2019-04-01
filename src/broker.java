@@ -22,7 +22,7 @@ public class broker {
 			new myThread(connection).start();
 		}*/
 		
-		connection = new Socket("192.168.1.140", 1871);
+		connection = new Socket("localhost", 1871);
 		new myThread(connection).start();
 	}
 	
@@ -41,7 +41,7 @@ public class broker {
 				out = new PrintStream(socket.getOutputStream());
 				in = new Scanner(socket.getInputStream());
 				
-				Socket requestSocket = new Socket("192.168.1.140", 1871);
+				Socket requestSocket = new Socket("localhost", 1871);
 				PrintStream p_out = new PrintStream(requestSocket.getOutputStream());
 				Scanner p_in = new Scanner(requestSocket.getInputStream());
 				

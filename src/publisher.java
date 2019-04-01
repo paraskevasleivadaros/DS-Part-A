@@ -13,13 +13,21 @@ public class publisher {
 		ServerSocket publisherSocket = new ServerSocket(1871);
 		Socket requestSocket = null;
 		
-		for (int i = 0; i < 2; i++) {
+		/*for (int i = 0; i < 2; i++) {
 			ArrayList busIDs = readBusLines(i);
 			while (true) {
 				requestSocket = publisherSocket.accept();
 				
 				new myThread(requestSocket, busIDs).start();
+				System.out.println("lol");
 			}
+		}*/
+		
+		ArrayList busIDs = readBusLines(0);
+		while (true) {
+			requestSocket = publisherSocket.accept();
+			
+			new myThread(requestSocket, busIDs).start();
 		}
 		
 		/*for (int i = 0; i < 2; i++) {
@@ -98,12 +106,12 @@ public class publisher {
 		}
 	}*/
 
-	String path = Paths.get("src\\busLinesNew.txt").toAbsolutePath().toString();
+	String path1 = Paths.get("src\\busLinesNew.txt").toAbsolutePath().toString();
 	// System.out.println(path);
 
 	public ArrayList readBusLines(int i) {
 		try{ 
-		    FileReader in = new FileReader(path);
+		    FileReader in = new FileReader(path1);
 		    BufferedReader br = new BufferedReader(in);
 		    ArrayList busIDs = new ArrayList();
 
@@ -125,9 +133,11 @@ public class publisher {
 		}
 	}
 	
+	String path2 = Paths.get("src\\busPositionsNew.txt").toAbsolutePath().toString();
+	
 	public String readBusPositions(String busID) {
 		try{ 
-			FileReader in = new FileReader(path);
+			FileReader in = new FileReader(path2);
 			BufferedReader br = new BufferedReader(in);                 //reading coordinates
 
 			String line;
