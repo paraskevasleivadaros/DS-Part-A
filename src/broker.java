@@ -88,6 +88,7 @@ public class broker {
 				} while (in.nextLine().compareTo("stop") != 0);
 				
 				in.nextLine();
+
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
