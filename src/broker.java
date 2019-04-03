@@ -10,11 +10,11 @@ public class broker {
 	
 	public static ArrayList br_bus;
 	public static String IP = "192.168.1.140";
-	static String path = Paths.get("src\\brokers.txt").toAbsolutePath().toString();
 
-	public static void main(String[] args) throws IOException {
-		String port = args[0];
-		
+    public static void main(String[] args) throws IOException {
+
+        String port = "1871";
+
 		String[] busLines = {"021", "022", "024", "025", "026", "027", "032", "036", "040", "046", "049", "051", "054", "057", "060", "1", "10"};
 		
 		ArrayList br_hash = new ArrayList();
@@ -160,7 +160,8 @@ public class broker {
 	} */
 	
 	public static ArrayList hashIPandPort() throws NoSuchAlgorithmException {
-		System.out.println(path);
+        String path = Paths.get("brokers.txt").toAbsolutePath().toString();
+
 		try{ 
 		    FileReader in = new FileReader(path);
 		    BufferedReader br = new BufferedReader(in);
