@@ -1,6 +1,7 @@
 import java.io.*;
 import java.math.*;
 import java.net.*;
+import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
@@ -9,11 +10,21 @@ public class broker {
 	
 	public static ArrayList br_bus;
 	public static String IP = "192.168.1.140";
+	static String path = Paths.get("src\\brokers.txt").toAbsolutePath().toString();
 
 	public static void main(String[] args) throws IOException {
 		String port = args[0];
 		
-		String[] busLines = {"021", "022", "024", "025", "026", "027", "032", "036", "040", "045", "049", "051", "054", "057", "060", "1", "10"};
+		String[] busLines = {"021", "022", "024", "025", "026", "027", "032", "036", "040", "046", "049", "051", "054", "057", "060", "1", "10"};
+		
+		ArrayList br_hash = new ArrayList();
+		try {
+			br_hash = hashIPandPort();
+		} catch (NoSuchAlgorithmException e1) {
+			e1.printStackTrace();
+		}
+		
+		System.out.println(br_hash);
 		
 		br_bus = new ArrayList();
 		
@@ -87,8 +98,8 @@ public class broker {
 					out.flush();
 				} while (in.nextLine().compareTo("stop") != 0);
 				
-				in.nextLine();
-
+				out.println(pub_msg);
+				out.flush();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -148,26 +159,25 @@ public class broker {
 		}
 	} */
 	
-	/*public ArrayList readBusLines() {
+	public static ArrayList hashIPandPort() throws NoSuchAlgorithmException {
+		System.out.println(path);
 		try{ 
-		    FileReader in = new FileReader("C:\\Users\\xristos\\Documents\\Eclipse Workspace\\DS_Part1\\src\\busLinesNew.txt");
+		    FileReader in = new FileReader(path);
 		    BufferedReader br = new BufferedReader(in);
-		    ArrayList busIDs = new ArrayList();
+		    ArrayList hashed = new ArrayList();
 
 		    String line;
-		    String lineCode;
 		    while ((line = br.readLine()) != null) {
-		    	//lineCode = line.substring(line.indexOf(',')+1, line.lastIndexOf(','));
-		    	lineCode = line.substring(0, line.indexOf(','));
-		    	busIDs.add(lineCode);
+		    	hashed.add(SHA1(line));
 		    }	
 		    in.close();
-		    return busIDs;
+		    Collections.sort(hashed);
+		    return hashed;
 		} catch (IOException e) {
 			System.out.println("File Read Error");
 			return null;
 		}
-	}*/
+	}
 	
 	public static String SHA1 (String s) throws NoSuchAlgorithmException {
 		MessageDigest mDigest = MessageDigest.getInstance("SHA-1");

@@ -9,8 +9,9 @@ public class publisher {
 	String path = Paths.get("src\\busPositionsNew.txt").toAbsolutePath().toString();
 	
 	public static void main(String[] args) throws UnknownHostException, IOException {
-		busIDs = null;
+		busIDs = new ArrayList();
 		for (int i = 0; i < args.length; i++) {
+			System.out.println(args[i]);
 			busIDs.add(args[i]);
 		}
 		new publisher().startPublisher();
