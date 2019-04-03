@@ -3,6 +3,7 @@ import java.net.*;
 import java.util.Scanner;
 
 public class consumer {
+    public static String IP = "localhost";
 
 	public static void main(String[] args) throws UnknownHostException, IOException {
 		new consumer().startClient();
@@ -11,7 +12,7 @@ public class consumer {
 	public void startClient() throws UnknownHostException, IOException {
 		Socket requestSocket = null;
 
-		requestSocket = new Socket(InetAddress.getByName("192.168.1.140"), 1917);
+		requestSocket = new Socket(InetAddress.getByName(IP), 1917);
 		new myThread(requestSocket).start();
 	}
 	

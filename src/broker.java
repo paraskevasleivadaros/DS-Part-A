@@ -9,7 +9,7 @@ import java.util.*;
 public class broker {
 	
 	public static ArrayList br_bus;
-	public static String IP = "192.168.1.140";
+	public static String IP = "localhost";
 
     public static void main(String[] args) throws IOException {
 
@@ -79,7 +79,7 @@ public class broker {
 				out = new PrintStream(socket.getOutputStream());
 				in = new Scanner(socket.getInputStream());
 				
-				requestSocket = new Socket("192.168.1.140", 1871);
+				requestSocket = new Socket(IP, 1871);
 				p_out = new PrintStream(requestSocket.getOutputStream());
 				p_in = new Scanner(requestSocket.getInputStream());
 				
