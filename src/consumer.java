@@ -1,11 +1,8 @@
 import java.io.*;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.net.UnknownHostException;
+import java.net.*;
 import java.util.Scanner;
 
 public class consumer {
-    public static String IP = "localhost";
 
 	public static void main(String[] args) throws UnknownHostException, IOException {
 		new consumer().startClient();
@@ -14,7 +11,7 @@ public class consumer {
 	public void startClient() throws UnknownHostException, IOException {
 		Socket requestSocket = null;
 
-		requestSocket = new Socket(InetAddress.getByName(IP), 1917);
+		requestSocket = new Socket(InetAddress.getByName("192.168.1.140"), 1917);
 		new myThread(requestSocket).start();
 	}
 	
@@ -32,17 +29,27 @@ public class consumer {
 			try {
 				out = new PrintStream(socket.getOutputStream());
 				in = new Scanner(socket.getInputStream());
-
+                String bro_msg;
+				String cons_msg;
+				
+                bro_msg = in.nextLine();
+                
+				
 				Scanner in2 = null;
 				
-				String cons_msg;
+				
 
 				System.out.println("Give me the number of the bus you are interested for :");
 				//cons_msg = in2.nextLine();
 				cons_msg = "046";
-				
-				out.println(cons_msg);
-				
+                if(!bro_msg.contains(cons_msg)){
+                   in.nextLine();    // list with remaining brokers
+                		             //change bro
+                	   
+                   
+                }
+                out.println(cons_msg);
+                
 				do {
 					System.out.println(in.nextLine());
 				} while (in.nextLine().compareTo("stop") != 0);
