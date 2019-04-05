@@ -9,9 +9,9 @@ public class consumer {
 	}
 
 	public void startClient() throws UnknownHostException, IOException {
-		Socket requestSocket = null;
+		Socket requestSocket;
 
-		requestSocket = new Socket(InetAddress.getByName("192.168.1.140"), 1917);
+		requestSocket = new Socket(InetAddress.getByName("localhost"), 1917);
 		new myThread(requestSocket).start();
 	}
 	
