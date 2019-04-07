@@ -1,17 +1,10 @@
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.math.BigInteger;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.io.*;
+import java.math.*;
+import java.net.*;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Hashtable;
-import java.util.Scanner;
+import java.util.*;
 
 public class broker {
 	
@@ -20,12 +13,12 @@ public class broker {
 	public static String IP = "192.168.1.140";
 	public static String path = Paths.get("brokers.txt").toAbsolutePath().toString();
 	public static String port;
+	public static String[] busLines = {"1151", "821", "750", "817", "818", "974", "1113", "816", "804", "1219", "1220", "938", "831", "819", "1180", "868", "824", "825", "1069", "1077"};
 
 	public static void main(String[] args) throws IOException {
 		port = args[0];
 		
 		//String[] busLines = {"021", "022", "024", "025", "026", "027", "032", "036", "040", "046", "049", "051", "054", "057", "060", "1", "10"};
-		String[] busLines = {"1151", "821", "750", "817", "818", "974", "1113", "816", "804", "1219", "1220", "938", "831", "819", "1180", "868", "824", "825", "1069", "1077"};
 	
 		ArrayList br_hash = new ArrayList();
 		try {
@@ -52,8 +45,6 @@ public class broker {
 			br_bus.put(match.get(br_hash.get(0)), br1_bus);
 			br_bus.put(match.get(br_hash.get(1)), br2_bus);
 			br_bus.put(match.get(br_hash.get(2)), br3_bus);
-			
-			System.out.println(br_bus);
 		} catch (NoSuchAlgorithmException e1) {
 			e1.printStackTrace();
 		}
@@ -90,6 +81,8 @@ public class broker {
 			try {
 				out = new PrintStream(socket.getOutputStream());
 				in = new Scanner(socket.getInputStream());
+				
+				out.println(br_bus.toString());
 				
 				requestSocket = new Socket("192.168.1.140", 1871);
 				p_out = new PrintStream(requestSocket.getOutputStream());

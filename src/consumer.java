@@ -1,12 +1,13 @@
-import java.io.IOException;
-import java.io.PrintStream;
-import java.net.Socket;
-import java.net.UnknownHostException;
+import java.io.*;
+import java.net.*;
 import java.util.Scanner;
 
 public class consumer {
+	
+	public static String bus;
 
 	public static void main(String[] args) throws UnknownHostException, IOException {
+		bus = args[0];
 		new consumer().startClient();
 	}
 
@@ -31,8 +32,47 @@ public class consumer {
 			try {
 				out = new PrintStream(socket.getOutputStream());
 				in = new Scanner(socket.getInputStream());
+				
+				String broker_buses = in.nextLine();
+				String[] tokens = broker_buses.split("], ");
+				
+				String broker1_buses = tokens[0];
+				String broker2_buses = tokens[1];
+				String broker3_buses = tokens[2];
+				
+				String broker1 = broker1_buses.substring(1, broker1_buses.indexOf("="));
+				broker1_buses = broker1_buses.substring(broker1_buses.indexOf("="));
+				
+				String broker2 = broker2_buses.substring(0, broker2_buses.indexOf("="));
+				broker2_buses = broker2_buses.substring(broker2_buses.indexOf("="));
+				
+				String broker3 = broker3_buses.substring(0, broker3_buses.indexOf("="));
+				broker3_buses = broker3_buses.substring(broker3_buses.indexOf("="));
 
-				Scanner in2 = null;
+				socket.close();
+				
+				if (broker1_buses.contains(bus)) {
+					socket = new Socket(broker1.substring(0, broker1.length()-4), Integer.parseInt(broker1.substring(broker1.length()-4)));
+				} else if (broker2_buses.contains(bus)) {
+					socket = new Socket(broker2.substring(0, broker2.length()-4), Integer.parseInt(broker2.substring(broker2.length()-4)));
+				} else if (broker3_buses.contains(bus)) {
+					socket = new Socket(broker3.substring(0, broker3.length()-4), Integer.parseInt(broker3.substring(broker3.length()-4)));
+				}
+
+				out = new PrintStream(socket.getOutputStream());
+				in = new Scanner(socket.getInputStream());
+				
+				out.println(bus);
+				
+				int i=0;
+				
+				do {
+					System.out.println(in.nextLine());
+					i++;
+					if(i==10) break;
+				} while (in.nextLine().compareTo("stop") != 0);
+				
+				/*Scanner in2 = null;
 				
 				String cons_msg;
 
@@ -42,9 +82,27 @@ public class consumer {
 				
 				out.println(cons_msg);
 				
+				int i=0;
+				
 				do {
 					System.out.println(in.nextLine());
+					i++;
+					if(i==10) break;
 				} while (in.nextLine().compareTo("stop") != 0);
+				
+				System.out.println("Yo");
+				
+				cons_msg = "825";
+				
+				out.println(cons_msg);
+				
+				i=0;
+				
+				do {
+					System.out.println(in.nextLine());
+					i++;
+					if(i==10) break;
+				} while (in.nextLine().compareTo("stop") != 0);*/
 
 			} catch (IOException e) {
 				e.printStackTrace();

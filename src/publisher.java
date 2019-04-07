@@ -1,23 +1,24 @@
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.UnknownHostException;
+import java.io.*;
+import java.net.*;
+import java.util.*;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Scanner;
 
 public class publisher {
 
 	public static ArrayList<String> busIDs;
 	public String path = Paths.get("busPositionsNew.txt").toAbsolutePath().toString();
+	public static String[] busLines = {"1151", "821", "750", "817", "818", "974", "1113", "816", "804", "1219", "1220", "938", "831", "819", "1180", "868", "824", "825", "1069", "1077"};
 	
 	public static void main(String[] args) throws UnknownHostException, IOException {
 		busIDs = new ArrayList<String>();
-		for (int i = 0; i < args.length; i++) {
-			busIDs.add(args[i]);
+		if (args[0].compareTo("1") == 0) {
+			for (int i = 0; i < 10; i++) {
+				busIDs.add(busLines[i]);
+			}
+		} else if (args[0].compareTo("2") == 0) {
+			for (int i = 10; i < busLines.length; i++) {
+				busIDs.add(busLines[i]);
+			}
 		}
 		new publisher().startPublisher();
 	}
