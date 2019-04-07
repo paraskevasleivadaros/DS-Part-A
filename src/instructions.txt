@@ -8,7 +8,7 @@ java broker 3421
 
 cd C:\Users\paras\IdeaProjects\DS-Part-A\src
 javac publisher.java
-java publisher 021, 022, 024, 025, 026, 027, 032, 036, 040, 046, 049, 051, 054, 057, 060, 1, 10
+java publisher 021 022 024 025 026 027 032 036 040 046 049 051 054 057 060 1 10
 
 cd C:\Users\paras\IdeaProjects\DS-Part-A\src
 javac consumer.java
