@@ -3,13 +3,16 @@
 Με την παρακάτω σειρά τα τρέχουμε και σε διαφορετικό cmd το καθένα:
 
 cd C:\Users\paras\IdeaProjects\DS-Part-A\src
+cd C:\Users\p3150090\IdeaProjects\DS-Part-A\src
 javac broker.java
 java broker 3421
 
 cd C:\Users\paras\IdeaProjects\DS-Part-A\src
+cd C:\Users\p3150090\IdeaProjects\DS-Part-A\src
 javac publisher.java
 java publisher 1 ή 2
 
 cd C:\Users\paras\IdeaProjects\DS-Part-A\src
+cd C:\Users\p3150090\IdeaProjects\DS-Part-A\src
 javac consumer.java
 java consumer 021

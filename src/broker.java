@@ -17,7 +17,7 @@ public class broker {
 	
 	public static Hashtable <String, ArrayList<String>> br_bus;
 	public static Hashtable <String, String> match;
-	public static String IP = " 192.168.1.140";
+	public static String IP = " 172.16.2.47";
 	public static String path = Paths.get("brokers.txt").toAbsolutePath().toString();
 	public static String port;
 	public static String[] busLines = {"1151", "821", "750", "817", "818", "974", "1113", "816", "804", "1219", "1220", "938", "831", "819", "1180", "868", "824", "825", "1069", "1077"};
@@ -92,8 +92,8 @@ public class broker {
 			try {
 				out = new PrintStream(socket.getOutputStream());
 				in = new Scanner(socket.getInputStream());
-				requestSocket1 = new Socket(" 192.168.1.140", 1871);
-				requestSocket2 = new Socket(" 192.168.1.140", 1204);
+				requestSocket1 = new Socket(" 172.16.2.47", 1871);
+				requestSocket2 = new Socket(" 172.16.2.47", 1204);
 
 				p_out = new PrintStream(requestSocket1.getOutputStream());
 				p_in = new Scanner(requestSocket1.getInputStream());

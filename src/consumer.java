@@ -16,7 +16,7 @@ public class consumer {
 	public void startClient() throws UnknownHostException, IOException {
 		Socket requestSocket = null;
 
-		requestSocket = new Socket(" 192.168.1.140", 3421);
+		requestSocket = new Socket(" 172.16.2.46", 3421);
 		new myThread(requestSocket).start();
 	}
 	
