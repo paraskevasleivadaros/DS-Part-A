@@ -10,7 +10,12 @@ java broker 3421
 cd C:\Users\paras\IdeaProjects\DS-Part-A\src
 cd C:\Users\p3150090\IdeaProjects\DS-Part-A\src
 javac publisher.java
-java publisher 1 Þ 2
+java publisher 1
+
+cd C:\Users\paras\IdeaProjects\DS-Part-A\src
+cd C:\Users\p3150090\IdeaProjects\DS-Part-A\src
+javac publisher.java
+java publisher 2
 
 cd C:\Users\paras\IdeaProjects\DS-Part-A\src
 cd C:\Users\p3150090\IdeaProjects\DS-Part-A\src
