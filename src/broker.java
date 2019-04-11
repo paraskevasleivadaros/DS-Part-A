@@ -1,16 +1,23 @@
-import java.io.*;
-import java.math.*;
-import java.net.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.math.BigInteger;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Hashtable;
+import java.util.Scanner;
 
 public class broker {
 	
 	public static Hashtable <String, ArrayList<String>> br_bus;
 	public static Hashtable <String, String> match;
-	public static String IP = "192.168.1.14";
+	public static String IP = " 192.168.1.140";
 	public static String path = Paths.get("brokers.txt").toAbsolutePath().toString();
 	public static String port;
 	public static String[] busLines = {"1151", "821", "750", "817", "818", "974", "1113", "816", "804", "1219", "1220", "938", "831", "819", "1180", "868", "824", "825", "1069", "1077"};
@@ -18,7 +25,7 @@ public class broker {
 	public static void main(String[] args) throws IOException {
 		port = args[0];
 		
-		// String[] busLines = {"021", "022", "024", "025", "026", "027", "032", "036", "040", "046", "049", "051", "054", "057", "060", "1", "10"};
+		//String[] busLines = {"021", "022", "024", "025", "026", "027", "032", "036", "040", "046", "049", "051", "054", "057", "060", "1", "10"};
 	
 		ArrayList br_hash = new ArrayList();
 		try {
@@ -74,20 +81,44 @@ public class broker {
 			PrintStream out = null;
 			Scanner in = null;
 			
-			Socket requestSocket = null;
+			Socket requestSocket1 = null;
+			Socket requestSocket2 = null;
 			PrintStream p_out = null;
 			Scanner p_in = null;
+
+			PrintStream p_out2 = null;
+			Scanner p_in2 = null;
 			
 			try {
 				out = new PrintStream(socket.getOutputStream());
 				in = new Scanner(socket.getInputStream());
-				
+				requestSocket1 = new Socket(" 192.168.1.140", 1871);
+				requestSocket2 = new Socket(" 192.168.1.140", 1204);
+
+				p_out = new PrintStream(requestSocket1.getOutputStream());
+				p_in = new Scanner(requestSocket1.getInputStream());
+
+				p_out2 = new PrintStream(requestSocket2.getOutputStream()); 
+				p_in2 = new Scanner(requestSocket2.getInputStream());
+
 				out.println(br_bus.toString());
+
+				p_out.println(br_bus.toString());
+				p_out2.println(br_bus.toString());
 				
-				requestSocket = new Socket(IP, 1871);
-				p_out = new PrintStream(requestSocket.getOutputStream());
-				p_in = new Scanner(requestSocket.getInputStream());
-				
+                   if (requestSocket1.isClosed()){
+                	    p_in.close();
+        	            p_out.close();
+                        p_in = p_in2;
+                        p_out = p_out2;
+                }else if(requestSocket2.isClosed()){
+        	            p_in2.close();
+        	            p_out2.close();
+                }
+                
+
+
+
 				String sub_msg;
 				String pub_msg;
 				
@@ -115,7 +146,11 @@ public class broker {
 	            this.socket.close();
 	            p_in.close();
 	            p_out.close();
-	            requestSocket.close();
+
+	            p_in2.close();
+	            p_out2.close();
+	            requestSocket1.close();
+	            requestSocket2.close();
 	        } catch (IOException e) {
 	            e.printStackTrace();
 	        }

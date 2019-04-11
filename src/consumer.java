@@ -1,9 +1,11 @@
-import java.io.*;
-import java.net.*;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.Scanner;
 
 public class consumer {
-	public static String IP = "192.168.1.14";
+	
 	public static String bus;
 
 	public static void main(String[] args) throws UnknownHostException, IOException {
@@ -14,7 +16,7 @@ public class consumer {
 	public void startClient() throws UnknownHostException, IOException {
 		Socket requestSocket = null;
 
-		requestSocket = new Socket(IP, 3421);
+		requestSocket = new Socket(" 192.168.1.140", 3421);
 		new myThread(requestSocket).start();
 	}
 	
@@ -62,23 +64,22 @@ public class consumer {
 				out = new PrintStream(socket.getOutputStream());
 				in = new Scanner(socket.getInputStream());
 				
-				out.println(bus);
-				
-				int i=0;
+				out.println(bus);				
+			    int i=0;
 				
 				do {
 					System.out.println(in.nextLine());
 					i++;
 					if(i==10) break;
 				} while (in.nextLine().compareTo("stop") != 0);
-				
-				/*Scanner in2 = null;
+				/*
+				Scanner in2 = null;
 				
 				String cons_msg;
 
-				System.out.println("Give me the number of the bus you are interested for :");
-				//cons_msg = in2.nextLine();
-				cons_msg = "824";
+				System.out.println("Give me the number of the bus you are interested for or type stop to terminate the program ");
+				cons_msg = in2.nextLine();
+				//cons_msg = "824";
 				
 				out.println(cons_msg);
 				
@@ -90,9 +91,9 @@ public class consumer {
 					if(i==10) break;
 				} while (in.nextLine().compareTo("stop") != 0);
 				
-				System.out.println("Yo");
+				System.out.println("Give another bus number or type stop to terminate the program");
 				
-				cons_msg = "825";
+				cons_msg =  in2.nextLine() ;
 				
 				out.println(cons_msg);
 				
