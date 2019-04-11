@@ -1,22 +1,22 @@
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.Scanner;
 
 public class consumer {
 	
 	public static String bus;
+	public static String IP = " 172.16.2.47";
 
-	public static void main(String[] args) throws UnknownHostException, IOException {
+	public static void main(String[] args) throws IOException {
 		bus = args[0];
 		new consumer().startClient();
 	}
 
-	public void startClient() throws UnknownHostException, IOException {
+	public void startClient() throws IOException {
 		Socket requestSocket = null;
 
-		requestSocket = new Socket(" 172.16.2.46", 3421);
+		requestSocket = new Socket(IP, 3421);
 		new myThread(requestSocket).start();
 	}
 	
@@ -72,39 +72,6 @@ public class consumer {
 					i++;
 					if(i==10) break;
 				} while (in.nextLine().compareTo("stop") != 0);
-				/*
-				Scanner in2 = null;
-				
-				String cons_msg;
-
-				System.out.println("Give me the number of the bus you are interested for or type stop to terminate the program ");
-				cons_msg = in2.nextLine();
-				//cons_msg = "824";
-				
-				out.println(cons_msg);
-				
-				int i=0;
-				
-				do {
-					System.out.println(in.nextLine());
-					i++;
-					if(i==10) break;
-				} while (in.nextLine().compareTo("stop") != 0);
-				
-				System.out.println("Give another bus number or type stop to terminate the program");
-				
-				cons_msg =  in2.nextLine() ;
-				
-				out.println(cons_msg);
-				
-				i=0;
-				
-				do {
-					System.out.println(in.nextLine());
-					i++;
-					if(i==10) break;
-				} while (in.nextLine().compareTo("stop") != 0);*/
-
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

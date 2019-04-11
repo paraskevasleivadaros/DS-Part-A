@@ -92,8 +92,8 @@ public class broker {
 			try {
 				out = new PrintStream(socket.getOutputStream());
 				in = new Scanner(socket.getInputStream());
-				requestSocket1 = new Socket(" 172.16.2.47", 1871);
-				requestSocket2 = new Socket(" 172.16.2.47", 1204);
+				requestSocket1 = new Socket(IP, 1871);
+				requestSocket2 = new Socket(IP, 1204);
 
 				p_out = new PrintStream(requestSocket1.getOutputStream());
 				p_in = new Scanner(requestSocket1.getInputStream());
@@ -156,49 +156,7 @@ public class broker {
 	        }
 		}
 	}
-	
-	/*private class myThread extends Thread {
-		Socket socket;
-		
-		public myThread(Socket socket) {
-			this.socket = socket;
-		}
-		
-		public void run() {
-			PrintStream out;
-			Scanner in;
-			ArrayList busIDs;
-			ArrayList brokerLines = new ArrayList();
-			try {
-				out = new PrintStream(socket.getOutputStream());
-				in = new Scanner(socket.getInputStream());
-				
-				busIDs = readBusLines();
-				
-				System.out.println(socket.getInetAddress().toString());
-				
-				String IPandPort = socket.getInetAddress().toString() + socket.getPort();
-				IPandPort = SHA1(IPandPort);
-				
-				for (int i = 0; i < busIDs.size(); i++) {
-					if (SHA1((String)busIDs.get(i)).compareTo(IPandPort) == -1) {
-						brokerLines.add((String)busIDs.get(i));
-					}
-				}
-				
-				System.out.println(brokerLines);
-				
-				System.out.println(busIDs);
-				System.out.println(in.nextLine());
-				System.out.println(in.nextLine());
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (NoSuchAlgorithmException e) {
-				e.printStackTrace();
-			}
-		}
-	} */
-	
+
 	public static ArrayList hashIPandPort() throws NoSuchAlgorithmException {
 		try{ 
 		    FileReader in = new FileReader(path);

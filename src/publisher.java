@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -15,7 +14,7 @@ public class publisher {
 	public String path = Paths.get("busPositionsNew.txt").toAbsolutePath().toString();
 	public static String[] busLines = {"1151", "821", "750", "817", "818", "974", "1113", "816", "804", "1219", "1220", "938", "831", "819", "1180", "868", "824", "825", "1069", "1077"};
 	public static boolean alt_publisher = false;
-	public static void main(String[] args) throws UnknownHostException, IOException {
+	public static void main(String[] args) throws IOException {
 		busIDs = new ArrayList<String>();
 		
 		if (args[0].compareTo("1") == 0) {
@@ -31,7 +30,7 @@ public class publisher {
 		new publisher().startPublisher();
 	}
 	
-	public void startPublisher() throws UnknownHostException, IOException {
+	public void startPublisher() throws IOException {
 		ServerSocket publisherSocket = null;
 		if(!alt_publisher){
 			 
@@ -137,76 +136,4 @@ public class publisher {
 	        }
 		}
 	}
-	
-	/*private class myThread extends Thread {
-		Socket socket;
-		int num;
-		
-		public myThread(Socket socket, int num) {
-			this.socket = socket;
-			this.num = num;
-		}
-		
-		public void run() {
-			PrintStream out;
-			Scanner in;
-			ArrayList busIDs;
-			try {
-				out = new PrintStream(socket.getOutputStream());
-				in = new Scanner(socket.getInputStream());
-				
-				busIDs = readBusLines(num);
-				
-				for (int i = 0; i < 2; i++) {
-					out.println(busIDs);
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-	}*/
-	
-	/*public ArrayList readBusLines(int i) {
-		try{ 
-		    FileReader in = new FileReader("C:\\Users\\xristos\\Documents\\Eclipse Workspace\\DS_Part1\\src\\busLinesNew.txt");
-		    BufferedReader br = new BufferedReader(in);
-		    ArrayList busIDs = new ArrayList();
-
-		    String line;
-		    String lineCode;
-		    while ((line = br.readLine()) != null) {
-		    	lineCode = line.substring(0, line.indexOf(','));
-		    	if (i == 0) {
-		    		if (Integer.parseInt(lineCode) < 900) busIDs.add(lineCode);
-		    	} else {
-		    		if (Integer.parseInt(lineCode) >= 900) busIDs.add(lineCode);
-		    	}
-		    }	
-		    in.close();
-		    return busIDs;
-		} catch (IOException e) {
-			System.out.println("File Read Error");
-			return null;
-		}
-	}*/
-	
-	/*public String readBusPositions(String busID) {
-		try{ 
-			FileReader in = new FileReader("C:\\Users\\xristos\\Documents\\Eclipse Workspace\\DS_Part1\\src\\busPositionsNew.txt");
-			BufferedReader br = new BufferedReader(in);                 //reading coordinates
-
-			String line;
-			    
-			while ((line = br.readLine()) != null) {
-					String[] tokens = line.split(",");
-					if (tokens[0].compareTo(busID) == 0) {
-				        return tokens[3]+" " + tokens[4];
-					}
-			} 
-			in.close();
-		} catch (IOException e) {
-			System.out.println("File Read Error");
-		}
-		return null;
-	}*/
 }
