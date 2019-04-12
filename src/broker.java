@@ -21,11 +21,11 @@ public class broker {
 	public static String path = Paths.get("brokers.txt").toAbsolutePath().toString();
 	public static String port;
 	public static String[] busLines = {"1151", "821", "750", "817", "818", "974", "1113", "816", "804", "1219", "1220", "938", "831", "819", "1180", "868", "824", "825", "1069", "1077"};
-
+    public static String[] busLinesCon = {"021", "022", "024", "025", "026", "027", "032", "036", "040", "046", "049", "051", "054", "057", "060", "1", "10"};
 	public static void main(String[] args) throws IOException {
 		port = args[0];
 		
-		//String[] busLines = {"021", "022", "024", "025", "026", "027", "032", "036", "040", "046", "049", "051", "054", "057", "060", "1", "10"};
+		
 	
 		ArrayList br_hash = new ArrayList();
 		try {
@@ -99,7 +99,11 @@ public class broker {
 				String pub_msg;
 				
 				sub_msg = in.nextLine();
-				
+				for (int i = 0 ; i < busLinesCon.length; i++){
+				   if(sub_msg == busLinesCon[i])
+					   sub_msg = busLines[i];
+				       break;
+				}
 				p_out.println(sub_msg);
 				p_out.flush();
 				
