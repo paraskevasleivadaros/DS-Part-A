@@ -1,31 +1,28 @@
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.Scanner;
 
 public class consumer {
-	
-	public static String bus;
 
-	public static void main(String[] args) throws UnknownHostException, IOException {
+    private static String bus;
+
+	public static void main(String[] args) throws IOException {
 		bus = args[0];
 		new consumer().startClient();
 	}
 
-	public void startClient() throws UnknownHostException, IOException {
-		Socket requestSocket = null;
-
-		requestSocket = new Socket("192.168.1.140", 3421);
+	private void startClient() throws IOException {
+		Socket requestSocket;
+        String IP = "192.168.1.7";
+        requestSocket = new Socket(IP, 3421);
 		new myThread(requestSocket).start();
 	}
 	
 	private class myThread extends Thread {
 		Socket socket;
 		
-		public myThread(Socket socket) {
-			this.socket = socket;
-		}
+		myThread(Socket socket) { this.socket = socket;	}
 		
 		public void run() {
 			PrintStream out = null;
@@ -111,9 +108,9 @@ public class consumer {
 			}
 
 			try {
-				in.close();
-				out.close();
-				this.socket.close();
+                if (in != null) in.close();
+                if (out != null) out.close();
+                this.socket.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
