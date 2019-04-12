@@ -14,10 +14,9 @@ public class publisher {
 	public static ArrayList<String> busIDs;
 	public String path = Paths.get("busPositionsNew.txt").toAbsolutePath().toString();
 	public static String[] busLines = {"1151", "821", "750", "817", "818", "974", "1113", "816", "804", "1219", "1220", "938", "831", "819", "1180", "868", "824", "825", "1069", "1077"};
-	public static boolean alt_publisher = false;
+	
 	public static void main(String[] args) throws UnknownHostException, IOException {
 		busIDs = new ArrayList<String>();
-		
 		if (args[0].compareTo("1") == 0) {
 			for (int i = 0; i < 10; i++) {
 				busIDs.add(busLines[i]);
@@ -26,21 +25,12 @@ public class publisher {
 			for (int i = 10; i < busLines.length; i++) {
 				busIDs.add(busLines[i]);
 			}
-			alt_publisher = true;
 		}
 		new publisher().startPublisher();
 	}
 	
 	public void startPublisher() throws UnknownHostException, IOException {
-		ServerSocket publisherSocket = null;
-		if(!alt_publisher){
-			 
-		     publisherSocket = new ServerSocket(1871);
-		     System.out.println("Hi I'm publisher 1");
-		}else {
-			 publisherSocket = new ServerSocket(1204);
-			 System.out.println("Hi I'm publisher 2");
-		}
+		ServerSocket publisherSocket = new ServerSocket(1871);
 		Socket requestSocket = null;
 		
 		while (true) {
@@ -64,40 +54,12 @@ public class publisher {
 			try {
 				out = new PrintStream(socket.getOutputStream());
 				in = new Scanner(socket.getInputStream());
-			
-			String broker_buses = in.nextLine();
-			String[] tokens1 = broker_buses.split("], ");
-			
-
-			String broker1_buses = tokens1[0];
-			String broker2_buses = tokens1[1];
-			String broker3_buses = tokens1[2];
-			
-			String broker1 = broker1_buses.substring(1, broker1_buses.indexOf("="));
-			broker1_buses = broker1_buses.substring(broker1_buses.indexOf("="));
-			
-			String broker2 = broker2_buses.substring(0, broker2_buses.indexOf("="));
-			broker2_buses = broker2_buses.substring(broker2_buses.indexOf("="));
-			
-			String broker3 = broker3_buses.substring(0, broker3_buses.indexOf("="));
-			broker3_buses = broker3_buses.substring(broker3_buses.indexOf("="));
-
-			socket.close();
-			
-			if (busIDs.contains(broker1_buses)) {
-				socket = new Socket(broker1.substring(0, broker1.length()-4), Integer.parseInt(broker1.substring(broker1.length()-4)));
-			} else if (busIDs.contains(broker2_buses)) {
-				socket = new Socket(broker2.substring(0, broker2.length()-4), Integer.parseInt(broker2.substring(broker2.length()-4)));
-			} else if (busIDs.contains(broker3_buses)) {
-				socket = new Socket(broker3.substring(0, broker3.length()-4), Integer.parseInt(broker3.substring(broker3.length()-4)));
-			}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 			
 			String broker_message = in.nextLine();
 			
-
 			while (broker_message != "stop") {
 				if (busIDs.contains(broker_message)) {
 					try{ 
