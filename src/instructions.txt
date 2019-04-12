@@ -1,15 +1,23 @@
-Για να βρεις το IP σου πάτα ipconfig στο cmd σου και βρες το IPv4 Address σου
+Για να βρείτε το IP σας πατάτε ipconfig στο cmd σας για να βρείτε το IPv4 Address του υπολογιστή σας
 
 Με την παρακάτω σειρά τα τρέχουμε και σε διαφορετικό cmd το καθένα:
 
 cd C:\Users\paras\IdeaProjects\DS-Part-A\src
+cd C:\Users\p3150090\IdeaProjects\DS-Part-A\src
 javac broker.java
 java broker 3421
 
 cd C:\Users\paras\IdeaProjects\DS-Part-A\src
+cd C:\Users\p3150090\IdeaProjects\DS-Part-A\src
 javac publisher.java
-java publisher 1 ή 2
+java publisher 1
 
 cd C:\Users\paras\IdeaProjects\DS-Part-A\src
+cd C:\Users\p3150090\IdeaProjects\DS-Part-A\src
+javac publisher.java
+java publisher 2
+
+cd C:\Users\paras\IdeaProjects\DS-Part-A\src
+cd C:\Users\p3150090\IdeaProjects\DS-Part-A\src
 javac consumer.java
 java consumer 021
