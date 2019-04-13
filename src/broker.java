@@ -1,54 +1,44 @@
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.math.BigInteger;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.io.*;
+import java.math.*;
+import java.net.*;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Hashtable;
-import java.util.Scanner;
+import java.util.*;
 
 public class broker {
 	
-	private static Hashtable <String, ArrayList<String>> br_bus;
-	private static Hashtable <String, String> match;
-	private static String path = Paths.get("brokers.txt").toAbsolutePath().toString();
-	private static String port;
-	private static String[] busLines = {"1151", "821", "750", "817", "818", "974", "1113", "816", "804", "1219", "1220", "938", "831", "819", "1180", "868", "824", "825", "1069", "1077"};
-    private static String[] busLinesCon = {"021", "022", "024", "025", "026", "027", "032", "036", "040", "046", "049", "051", "054", "057", "060", "1", "10"};
+	public static Hashtable <String, ArrayList<String>> br_bus;
+	public static Hashtable <String, String> match;
+	public static String IP = "192.168.1.140";
+	public static String path = Paths.get("brokers.txt").toAbsolutePath().toString();
+	public static String port;
+	public static String[] busLines = {"1151", "821", "750", "817", "818", "974", "1113", "816", "804", "1219", "1220", "938", "831", "819", "1180", "868", "824", "825", "1069", "1077"};
 
-    public static void main(String[] args) throws IOException {
-
+	public static void main(String[] args) throws IOException {
 		port = args[0];
-		ArrayList br_hash;
-
+		
+		ArrayList br_hash = new ArrayList();
 		try {
 			br_hash = hashIPandPort();
 			
 			ArrayList br1_bus = new ArrayList();
 			ArrayList br2_bus = new ArrayList();
 			ArrayList br3_bus = new ArrayList();
-
-			for (String busLine : busLines) {
-				if (br_hash != null) {
-					if (SHA1(busLine).compareTo((String) br_hash.get(0)) == -1) {
-						br1_bus.add(busLine);
-					} else if (SHA1(busLine).compareTo((String) br_hash.get(1)) == -1) {
-						br2_bus.add(busLine);
-					} else if (SHA1(busLine).compareTo((String) br_hash.get(2)) == -1) {
-						br3_bus.add(busLine);
-					} else {
-						br1_bus.add(busLine);
-					}
+			
+			for (int i = 0; i < busLines.length; i++) {
+				if (SHA1(busLines[i]).compareTo((String)br_hash.get(0)) == -1) {
+					br1_bus.add(busLines[i]);
+				} else if (SHA1(busLines[i]).compareTo((String)br_hash.get(1)) == -1) {
+					br2_bus.add(busLines[i]);
+				} else if (SHA1(busLines[i]).compareTo((String)br_hash.get(2)) == -1) {
+					br3_bus.add(busLines[i]);
+				} else {
+					br1_bus.add(busLines[i]);
 				}
 			}
 			
-			br_bus = new Hashtable <>();
+			br_bus = new Hashtable <String, ArrayList<String>>();
 
 			br_bus.put(match.get(br_hash.get(0)), br1_bus);
 			br_bus.put(match.get(br_hash.get(1)), br2_bus);
@@ -60,12 +50,13 @@ public class broker {
 		new broker().openServer();
 	}
 	
-	private void openServer() throws IOException {
+	public void openServer() throws IOException {
 		ServerSocket providerSocket = new ServerSocket(Integer.parseInt(port));
-		Socket connection;
+		Socket connection = null;
 		
 		while(true) {
 			connection = providerSocket.accept();
+			
 			new myThread(connection).start();
 		}
 	}
@@ -73,7 +64,7 @@ public class broker {
 	private class myThread extends Thread {
 		Socket socket;
 		
-		myThread(Socket socket) {
+		public myThread(Socket socket) {
 			this.socket = socket;
 		}
 		
@@ -81,41 +72,61 @@ public class broker {
 			PrintStream out = null;
 			Scanner in = null;
 			
-			Socket requestSocket = null;
+			Socket requestSocket1 = null;
+			Socket requestSocket2 = null;
 			PrintStream p_out = null;
 			Scanner p_in = null;
+			PrintStream p1_out = null;
+			Scanner p1_in = null;
+			PrintStream p2_out = null;
+			Scanner p2_in = null;
 			
 			try {
 				out = new PrintStream(socket.getOutputStream());
 				in = new Scanner(socket.getInputStream());
 				
 				out.println(br_bus.toString());
+				out.flush();
+				
+				requestSocket1 = new Socket("192.168.1.140", 1871);
+				p1_out = new PrintStream(requestSocket1.getOutputStream());
+				p1_in = new Scanner(requestSocket1.getInputStream());
 
-				String IP = "192.168.1.7";
-				requestSocket = new Socket(IP, 1871);
-				p_out = new PrintStream(requestSocket.getOutputStream());
-				p_in = new Scanner(requestSocket.getInputStream());
+				p1_out.println(br_bus.toString());
+				p1_out.flush();
+				
+				requestSocket2 = new Socket("192.168.1.140", 1917);
+				p2_out = new PrintStream(requestSocket2.getOutputStream());
+				p2_in = new Scanner(requestSocket2.getInputStream());
+				
+				p2_out.println(br_bus.toString());
+				p2_out.flush();
 				
 				String sub_msg;
 				String pub_msg;
 				
 				sub_msg = in.nextLine();
-				for (int i = 0 ; i < busLinesCon.length; i++){
-				   if(sub_msg.equals(busLinesCon[i])) {
-					   sub_msg = busLines[i];
-					   break;
-				   }
+				
+				p1_out.println(sub_msg);
+				p1_out.flush();
+				p2_out.println(sub_msg);
+				p2_out.flush();
+				
+				if (p1_in.nextLine().compareTo(port) == 0) {
+					p_out = p1_out;
+					p_in = p1_in;
+				} else if (p2_in.nextLine().compareTo(port) == 0) {
+					p_out = p2_out;
+					p_in = p2_in;
 				}
-
-				p_out.println(sub_msg);
-				p_out.flush();
-
+				
 				do {
 					pub_msg = p_in.nextLine();
+					
 					out.println(pub_msg);
 					out.flush();
 				} while (p_in.nextLine().compareTo("stop") != 0);
-
+				
 				out.println(pub_msg);
 				out.flush();
 			} catch (IOException e) {
@@ -123,13 +134,18 @@ public class broker {
 			}
 			
 			try {
-				if (in != null) in.close();
-				if (out != null) out.close();
-				this.socket.close();
-				if (p_in != null) p_in.close();
-				if (p_out != null) p_out.close();
-				if (requestSocket != null) requestSocket.close();
-			} catch (IOException e) {
+	            in.close();
+	            out.close();
+	            this.socket.close();
+	            p_in.close();
+	            p_out.close();
+	            p1_in.close();
+	            p1_out.close();
+	            p2_in.close();
+	            p2_out.close();
+	            requestSocket1.close();
+	            requestSocket2.close();
+	        } catch (IOException e) {
 	            e.printStackTrace();
 	        }
 		}
@@ -177,12 +193,12 @@ public class broker {
 		}
 	} */
 	
-	private static ArrayList hashIPandPort() throws NoSuchAlgorithmException {
+	public static ArrayList hashIPandPort() throws NoSuchAlgorithmException {
 		try{ 
 		    FileReader in = new FileReader(path);
 		    BufferedReader br = new BufferedReader(in);
 		    ArrayList hashed = new ArrayList();
-		    match = new Hashtable <>();
+		    match = new Hashtable <String, String>();
 
 		    String line;
 		    while ((line = br.readLine()) != null) {
@@ -198,7 +214,7 @@ public class broker {
 		}
 	}
 	
-	private static String SHA1(String s) throws NoSuchAlgorithmException {
+	public static String SHA1 (String s) throws NoSuchAlgorithmException {
 		MessageDigest mDigest = MessageDigest.getInstance("SHA-1");
 		mDigest.update(s.getBytes(), 0, s.length());
 		return new BigInteger(1, mDigest.digest()).toString();

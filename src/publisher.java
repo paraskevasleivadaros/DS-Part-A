@@ -1,37 +1,38 @@
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.io.*;
+import java.net.*;
+import java.util.*;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Scanner;
 
 public class publisher {
 
-	private static ArrayList<String> busIDs;
-	private String path = Paths.get("busPositionsNew.txt").toAbsolutePath().toString();
-	private static String[] busLines = {"1151", "821", "750", "817", "818", "974", "1113", "816", "804", "1219", "1220", "938", "831", "819", "1180", "868", "824", "825", "1069", "1077"};
+	public static ArrayList<String> busIDs;
+	public static int port;
+	public String path = Paths.get("busPositionsNew.txt").toAbsolutePath().toString();
+	public static String[] busLines = {"1151", "821", "750", "817", "818", "974", "1113", "816", "804", "1219", "1220", "938", "831", "819", "1180", "868", "824", "825", "1069", "1077"};
 	
-	public static void main(String[] args) throws IOException {
-		busIDs = new ArrayList<>();
+	public static void main(String[] args) throws UnknownHostException, IOException {
+		busIDs = new ArrayList<String>();
+		port = 1871;
 		if (args[0].compareTo("1") == 0) {
-            busIDs.addAll(Arrays.asList(busLines).subList(0, 10));
+			for (int i = 0; i < 10; i++) {
+				busIDs.add(busLines[i]);
+			}
 		} else if (args[0].compareTo("2") == 0) {
-            busIDs.addAll(Arrays.asList(busLines).subList(10, busLines.length));
+			port = 1917;
+			for (int i = 10; i < busLines.length; i++) {
+				busIDs.add(busLines[i]);
+			}
 		}
 		new publisher().startPublisher();
 	}
 	
-	private void startPublisher() throws IOException {
-		ServerSocket publisherSocket = new ServerSocket(1871);
-		Socket requestSocket;
+	public void startPublisher() throws UnknownHostException, IOException {
+		ServerSocket publisherSocket = new ServerSocket(port);
+		Socket requestSocket = null;
 		
 		while (true) {
 			requestSocket = publisherSocket.accept();
+			
 			new myThread(requestSocket).start();
 		}
 	}
@@ -39,7 +40,7 @@ public class publisher {
 	private class myThread extends Thread {
 		Socket socket;
 		
-		myThread(Socket socket) {
+		public myThread(Socket socket) {
 			this.socket = socket;
 		}
 		
@@ -53,52 +54,94 @@ public class publisher {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			
+			String broker_buses = in.nextLine();
+			String[] tokens = broker_buses.split("], ");
+			
+			String broker1_buses = tokens[0];
+			String broker2_buses = tokens[1];
+			String broker3_buses = tokens[2];
+			
+			String broker1 = broker1_buses.substring(1, broker1_buses.indexOf("="));
+			broker1_buses = broker1_buses.substring(broker1_buses.indexOf("="));
+			
+			String broker2 = broker2_buses.substring(0, broker2_buses.indexOf("="));
+			broker2_buses = broker2_buses.substring(broker2_buses.indexOf("="));
+			
+			String broker3 = broker3_buses.substring(0, broker3_buses.indexOf("="));
+			broker3_buses = broker3_buses.substring(broker3_buses.indexOf("="));
+			
+			String broker_message = in.nextLine();
+			
+			if (busIDs.contains(broker_message)) {
+				if (broker1_buses.contains(broker_message)) {
+					out.println(Integer.parseInt(broker1.substring(broker1.length()-4)));
+				} else if (broker2_buses.contains(broker_message)) {
+					out.println(Integer.parseInt(broker2.substring(broker2.length()-4)));
+				} else if (broker3_buses.contains(broker_message)) {
+					out.println(Integer.parseInt(broker3.substring(broker3.length()-4)));
+				}
+				
+				try{ 
+					FileReader in2 = new FileReader(path);
+					BufferedReader br = new BufferedReader(in2);
 
-            String broker_message = null;
-            if (in != null) {
-                broker_message = in.nextLine();
-            }
+					String line;
+					    
+					while ((line = br.readLine()) != null) {
+						String[] t = line.split(",");
+						if (t[0].compareTo(broker_message) == 0) {
+							out.println(t[3]+" " + t[4]);
+							out.flush();
+							sleep(500);
+						}
+					}
+					out.println("stop");
+					out.flush();
+					in2.close();
+				} catch (IOException e) {
+					System.out.println("File Read Error");
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			} else {
+				out.println("Not found!");
+			}
+			
+			/*while (broker_message != "stop") {
+				if (busIDs.contains(broker_message)) {
+					try{ 
+						FileReader in2 = new FileReader(path);
+						BufferedReader br = new BufferedReader(in2);
 
-            if (broker_message != null) {
-                while (broker_message.equals("stop")) {
-                    if (busIDs.contains(broker_message)) {
-                        try{
-                            FileReader in2 = new FileReader(path);
-                            BufferedReader br = new BufferedReader(in2);
-
-                            String line;
-
-                            while ((line = br.readLine()) != null) {
-                                String[] tokens = line.split(",");
-                                if (tokens[0].compareTo(Objects.requireNonNull(broker_message)) == 0) {
-
-                                   out.println(tokens[3]+" " + tokens[4]);
-                                   out.flush();
-
-                                   sleep(500);
-                                }
-                            }
-
-                            out.println("stop");
-                            out.flush();
-                            in2.close();
-
-                        } catch (IOException e) {
-                            System.out.println("File Read Error");
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    } else {
-                        out.println("Not found!");
-                    }
-                    broker_message = in.nextLine();
-                }
-            }
-
-            try {
-                if (in != null) in.close();
-                if (out != null) out.close();
-                this.socket.close();
+						String line;
+						    
+						while ((line = br.readLine()) != null) {
+							String[] t = line.split(",");
+							if (t[0].compareTo(broker_message) == 0) {
+								out.println(t[3]+" " + t[4]);
+								out.flush();
+								sleep(500);
+							}
+						}
+						out.println("stop");
+						out.flush();
+						in2.close();
+					} catch (IOException e) {
+						System.out.println("File Read Error");
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				} else {
+					out.println("Not found!");
+				}
+				broker_message = in.nextLine();
+			}*/
+			
+			try {
+	            in.close();
+	            out.close();
+	            this.socket.close();
 	        } catch (IOException e) {
 	            e.printStackTrace();
 	        }

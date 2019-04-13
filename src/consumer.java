@@ -1,28 +1,37 @@
-import java.io.IOException;
-import java.io.PrintStream;
-import java.net.Socket;
+import java.io.*;
+import java.net.*;
 import java.util.Scanner;
 
 public class consumer {
+	
+	public static String bus;
+	public static String[] busLines = {"1151", "821", "750", "817", "818", "974", "1113", "816", "804", "1219", "1220", "938", "831", "819", "1180", "868", "824", "825", "1069", "1077"};
+    public static String[] busLinesCon = {"021", "022", "024", "025", "026", "027", "032", "035", "036", "036", "036", "040", "046", "049", "051", "054", "057", "060", "1", "10"};
 
-    private static String bus;
-
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws UnknownHostException, IOException {
 		bus = args[0];
+		for (int i = 0; i < busLinesCon.length; i++){
+			if(bus.compareTo(busLinesCon[i]) == 0) {
+				bus = busLines[i];
+			    break;
+			}
+		}
 		new consumer().startClient();
 	}
 
-	private void startClient() throws IOException {
-		Socket requestSocket;
-        String IP = "192.168.1.7";
-        requestSocket = new Socket(IP, 3421);
+	public void startClient() throws UnknownHostException, IOException {
+		Socket requestSocket = null;
+
+		requestSocket = new Socket("192.168.1.140", 3421);
 		new myThread(requestSocket).start();
 	}
 	
 	private class myThread extends Thread {
 		Socket socket;
 		
-		myThread(Socket socket) { this.socket = socket;	}
+		public myThread(Socket socket) {
+			this.socket = socket;
+		}
 		
 		public void run() {
 			PrintStream out = null;
@@ -63,12 +72,14 @@ public class consumer {
 				
 				out.println(bus);
 				
-				int i=0;
+				//int i=0;
+				
+				in.nextLine();
 				
 				do {
 					System.out.println(in.nextLine());
-					i++;
-					if(i==10) break;
+					//i++;
+					//if(i==10) break;
 				} while (in.nextLine().compareTo("stop") != 0);
 				
 				/*Scanner in2 = null;
@@ -108,9 +119,9 @@ public class consumer {
 			}
 
 			try {
-                if (in != null) in.close();
-                if (out != null) out.close();
-                this.socket.close();
+				in.close();
+				out.close();
+				this.socket.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
