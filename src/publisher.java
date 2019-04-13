@@ -1,16 +1,40 @@
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Scanner;
 
 public class publisher {
 
 	public static ArrayList<String> busIDs;
 	public static int port;
+	public static String[] busLines = new String[23930];
+	private static String path2 = Paths.get("busPositionsNew.txt").toAbsolutePath().toString();
 	public String path = Paths.get("busPositionsNew.txt").toAbsolutePath().toString();
-	public static String[] busLines = {"1151", "821", "750", "817", "818", "974", "1113", "816", "804", "1219", "1220", "938", "831", "819", "1180", "868", "824", "825", "1069", "1077"};
-	
-	public static void main(String[] args) throws UnknownHostException, IOException {
+
+	public static void main(String[] args) throws IOException {
+		try {
+			FileReader in = new FileReader(path2);
+			BufferedReader br = new BufferedReader(in);
+
+			String line;
+			int i;
+			i = 0;
+			while ((line = br.readLine()) != null) {
+				String[] tokens = line.split(",");
+				busLines[i] = tokens[0]; //reading from first letter till first ','
+				i++;
+			}
+			in.close();
+
+		} catch (IOException e) {
+			System.out.println("File Read Error");
+		}
+
 		busIDs = new ArrayList<String>();
 		port = 1871;
 		if (args[0].compareTo("1") == 0) {
@@ -25,8 +49,8 @@ public class publisher {
 		}
 		new publisher().startPublisher();
 	}
-	
-	public void startPublisher() throws UnknownHostException, IOException {
+
+	public void startPublisher() throws IOException {
 		ServerSocket publisherSocket = new ServerSocket(port);
 		Socket requestSocket = null;
 		

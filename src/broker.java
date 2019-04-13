@@ -1,23 +1,47 @@
-import java.io.*;
-import java.math.*;
-import java.net.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.math.BigInteger;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Hashtable;
+import java.util.Scanner;
 
 public class broker {
 	
 	public static Hashtable <String, ArrayList<String>> br_bus;
 	public static Hashtable <String, String> match;
-	public static String IP = "192.168.1.140";
+	public static String IP = "192.168.1.7";
 	public static String path = Paths.get("brokers.txt").toAbsolutePath().toString();
+	public static String[] busLines = new String[20];
 	public static String port;
-	public static String[] busLines = {"1151", "821", "750", "817", "818", "974", "1113", "816", "804", "1219", "1220", "938", "831", "819", "1180", "868", "824", "825", "1069", "1077"};
+	private static String path2 = Paths.get("busLinesNew.txt").toAbsolutePath().toString();
 
 	public static void main(String[] args) throws IOException {
 		port = args[0];
-		
+		try {
+			FileReader in = new FileReader(path2);
+			BufferedReader br = new BufferedReader(in);
+
+			String line;
+			int i;
+			i = 0;
+			while ((line = br.readLine()) != null) {
+				String[] tokens = line.split(",");
+				busLines[i] = tokens[0];  //reading from first letter till first ','
+				i++;
+			}
+			in.close();
+
+		} catch (IOException e) {
+			System.out.println("File Read Error");
+		}
 		ArrayList br_hash = new ArrayList();
 		try {
 			br_hash = hashIPandPort();
@@ -25,16 +49,16 @@ public class broker {
 			ArrayList br1_bus = new ArrayList();
 			ArrayList br2_bus = new ArrayList();
 			ArrayList br3_bus = new ArrayList();
-			
-			for (int i = 0; i < busLines.length; i++) {
-				if (SHA1(busLines[i]).compareTo((String)br_hash.get(0)) == -1) {
-					br1_bus.add(busLines[i]);
-				} else if (SHA1(busLines[i]).compareTo((String)br_hash.get(1)) == -1) {
-					br2_bus.add(busLines[i]);
-				} else if (SHA1(busLines[i]).compareTo((String)br_hash.get(2)) == -1) {
-					br3_bus.add(busLines[i]);
+
+			for (String busLine : busLines) {
+				if (SHA1(busLine).compareTo((String) br_hash.get(0)) == -1) {
+					br1_bus.add(busLine);
+				} else if (SHA1(busLine).compareTo((String) br_hash.get(1)) == -1) {
+					br2_bus.add(busLine);
+				} else if (SHA1(busLine).compareTo((String) br_hash.get(2)) == -1) {
+					br3_bus.add(busLine);
 				} else {
-					br1_bus.add(busLines[i]);
+					br1_bus.add(busLine);
 				}
 			}
 			
@@ -87,15 +111,15 @@ public class broker {
 				
 				out.println(br_bus.toString());
 				out.flush();
-				
-				requestSocket1 = new Socket("192.168.1.140", 1871);
+
+				requestSocket1 = new Socket("192.168.1.7", 1871);
 				p1_out = new PrintStream(requestSocket1.getOutputStream());
 				p1_in = new Scanner(requestSocket1.getInputStream());
 
 				p1_out.println(br_bus.toString());
 				p1_out.flush();
-				
-				requestSocket2 = new Socket("192.168.1.140", 1917);
+
+				requestSocket2 = new Socket("192.168.1.7", 1917);
 				p2_out = new PrintStream(requestSocket2.getOutputStream());
 				p2_in = new Scanner(requestSocket2.getInputStream());
 				

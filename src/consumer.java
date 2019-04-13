@@ -1,14 +1,38 @@
-import java.io.*;
-import java.net.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.net.Socket;
+import java.nio.file.Paths;
 import java.util.Scanner;
 
 public class consumer {
 	
 	public static String bus;
-	public static String[] busLines = {"1151", "821", "750", "817", "818", "974", "1113", "816", "804", "1219", "1220", "938", "831", "819", "1180", "868", "824", "825", "1069", "1077"};
-    public static String[] busLinesCon = {"021", "022", "024", "025", "026", "027", "032", "035", "036", "036", "036", "040", "046", "049", "051", "054", "057", "060", "1", "10"};
+	public static String[] busLines = new String[20];
+	public static String[] busLinesCon = new String[20];
+	private static String path = Paths.get("brokers.txt").toAbsolutePath().toString();
+	private static String path2 = Paths.get("busLinesNew.txt").toAbsolutePath().toString();
 
-	public static void main(String[] args) throws UnknownHostException, IOException {
+	public static void main(String[] args) throws IOException {
+		try {
+			FileReader in = new FileReader(path2);
+			BufferedReader br = new BufferedReader(in);
+
+			String line;
+			int i;
+			i = 0;
+			while ((line = br.readLine()) != null) {
+				String[] tokens = line.split(",");
+				busLines[i] = tokens[0];      // reading from first letter till first ','
+				busLinesCon[i] = tokens[1];   // reading from second ',' till third ','
+				i++;
+			}
+			in.close();
+
+		} catch (IOException e) {
+			System.out.println("File Read Error");
+		}
 		bus = args[0];
 		for (int i = 0; i < busLinesCon.length; i++){
 			if(bus.compareTo(busLinesCon[i]) == 0) {
@@ -19,10 +43,10 @@ public class consumer {
 		new consumer().startClient();
 	}
 
-	public void startClient() throws UnknownHostException, IOException {
+	public void startClient() throws IOException {
 		Socket requestSocket = null;
 
-		requestSocket = new Socket("192.168.1.140", 3421);
+		requestSocket = new Socket("192.168.1.7", 3421);
 		new myThread(requestSocket).start();
 	}
 	
