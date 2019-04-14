@@ -18,16 +18,16 @@ Find your IP(Wi-FI):
 cd C:\Users\paras\IdeaProjects\DS-Part-A\src<br>
 javac broker.java<br>
 javac publisher.java<br>
-javac consumer.java<br>
+javac consumer.java
 
 cd C:\Users\paras\IdeaProjects\DS-Part-A\src<br>
-java broker 3421<br>
+java broker 3421
 
 cd C:\Users\paras\IdeaProjects\DS-Part-A\src<br>
-java broker 3822<br>
+java broker 3822
 
 cd C:\Users\paras\IdeaProjects\DS-Part-A\src<br>
-java broker 3719<br>
+java broker 3719
 
 cd C:\Users\paras\IdeaProjects\DS-Part-A\src<br>
 java publisher 1

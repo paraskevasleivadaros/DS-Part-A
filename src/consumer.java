@@ -4,23 +4,26 @@ import java.nio.file.Paths;
 import java.util.Scanner;
 
 public class consumer {
-	
-	public static String bus;
-	private static String path = Paths.get("brokers.txt").toAbsolutePath().toString();
+
+	private static String IP = "192.168.1.7";
 	private static String path2 = Paths.get("busLinesNew.txt").toAbsolutePath().toString();
-	public static String[] busLines;
-	public static String[] busLinesCon;
+	private static String bus;
+	private static String[] busLines;
+	private static String[] busLinesCon;
+	private static int size;
 
 	static {
 		try {
-			busLines = new String[countLinesNew(path2)];
-			busLinesCon = new String[countLinesNew(path2)];
+			size = countLinesNew(path2);
+			busLines = new String[size];
+			busLinesCon = new String[size];
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
 	public static void main(String[] args) throws IOException {
+
 		try {
 			FileReader in = new FileReader(path2);
 			BufferedReader br = new BufferedReader(in);
@@ -49,11 +52,8 @@ public class consumer {
 		new consumer().startClient();
 	}
 
-	public void startClient() throws IOException {
-		Socket requestSocket = null;
-
-		requestSocket = new Socket("192.168.1.7", 3421);
-		new myThread(requestSocket).start();
+	public static int countLinesNew(String filename) throws IOException {
+		return countLines(filename);
 	}
 	
 	private class myThread extends Thread {
@@ -158,7 +158,7 @@ public class consumer {
 		}
 	}
 
-	public static int countLinesNew(String filename) throws IOException {
+	static int countLines(String filename) throws IOException {
 		InputStream is = new BufferedInputStream(new FileInputStream(filename));
 		try {
 			byte[] c = new byte[1024];
@@ -182,7 +182,7 @@ public class consumer {
 
 			// count remaining characters
 			while (readChars != -1) {
-				System.out.println(readChars);
+				// System.out.println(readChars);
 				for (int i = 0; i < readChars; ++i) {
 					if (c[i] == '\n') {
 						++count;
@@ -195,5 +195,12 @@ public class consumer {
 		} finally {
 			is.close();
 		}
+	}
+
+	public void startClient() throws IOException {
+		Socket requestSocket = null;
+
+		requestSocket = new Socket(IP, 3421);
+		new myThread(requestSocket).start();
 	}
 }
