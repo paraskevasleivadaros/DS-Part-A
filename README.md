@@ -16,31 +16,24 @@ Find your IP(Wi-FI):
 Με την παρακάτω σειρά τα τρέχουμε και σε διαφορετικό cmd το καθένα:<br>
 
 cd C:\Users\paras\IdeaProjects\DS-Part-A\src<br>
-cd C:\Users\p3150090\IdeaProjects\DS-Part-A\src<br>
 javac broker.java<br>
+javac publisher.java<br>
+javac consumer.java<br>
+
+cd C:\Users\paras\IdeaProjects\DS-Part-A\src<br>
 java broker 3421<br>
 
 cd C:\Users\paras\IdeaProjects\DS-Part-A\src<br>
-cd C:\Users\p3150090\IdeaProjects\DS-Part-A\src<br>
-javac broker.java<br>
 java broker 3822<br>
 
 cd C:\Users\paras\IdeaProjects\DS-Part-A\src<br>
-cd C:\Users\p3150090\IdeaProjects\DS-Part-A\src<br>
-javac broker.java<br>
 java broker 3719<br>
 
 cd C:\Users\paras\IdeaProjects\DS-Part-A\src<br>
-cd C:\Users\p3150090\IdeaProjects\DS-Part-A\src<br>
-javac publisher.java<br>
 java publisher 1
 
 cd C:\Users\paras\IdeaProjects\DS-Part-A\src<br>
-cd C:\Users\p3150090\IdeaProjects\DS-Part-A\src<br>
-javac publisher.java<br>
 java publisher 2
 
 cd C:\Users\paras\IdeaProjects\DS-Part-A\src<br>
-cd C:\Users\p3150090\IdeaProjects\DS-Part-A\src<br>
-javac consumer.java<br>
 java consumer 021
