@@ -15,12 +15,12 @@ import java.util.Scanner;
 
 public class broker {
 
-	private static Hashtable<String, ArrayList<String>> br_bus;
-	private static Hashtable<String, String> match;
-	private static String IP = "192.168.1.7";
+    public static String[] busLines;
+    private static Hashtable<String, ArrayList<String>> br_bus;
+    private static Hashtable<String, String> match;
 	private static String path = Paths.get("brokers.txt").toAbsolutePath().toString();
 	private static String path2 = Paths.get("busLinesNew.txt").toAbsolutePath().toString();
-	private static String[] busLines;
+    private static String IP = "192.168.1.140";
 	private static String port;
 
 	static {
@@ -93,78 +93,36 @@ public class broker {
 		}
 	}
 
-	public static int countLinesNew(String filename) throws IOException {
-		return consumer.countLines(filename);
-	}
-	
-	/*private class myThread extends Thread {
-		Socket socket;
-		
-		public myThread(Socket socket) {
-			this.socket = socket;
-		}
-		
-		public void run() {
-			PrintStream out;
-			Scanner in;
-			ArrayList busIDs;
-			ArrayList brokerLines = new ArrayList();
-			try {
-				out = new PrintStream(socket.getOutputStream());
-				in = new Scanner(socket.getInputStream());
-				
-				busIDs = readBusLines();
-				
-				System.out.println(socket.getInetAddress().toString());
-				
-				String IPandPort = socket.getInetAddress().toString() + socket.getPort();
-				IPandPort = SHA1(IPandPort);
-				
-				for (int i = 0; i < busIDs.size(); i++) {
-					if (SHA1((String)busIDs.get(i)).compareTo(IPandPort) == -1) {
-						brokerLines.add((String)busIDs.get(i));
-					}
-				}
-				
-				System.out.println(brokerLines);
-				
-				System.out.println(busIDs);
-				System.out.println(in.nextLine());
-				System.out.println(in.nextLine());
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (NoSuchAlgorithmException e) {
-				e.printStackTrace();
-			}
-		}
-	} */
+    public static ArrayList hashIPandPort() throws NoSuchAlgorithmException {
+        try {
+            FileReader in = new FileReader(path);
+            BufferedReader br = new BufferedReader(in);
+            ArrayList hashed = new ArrayList();
+            match = new Hashtable<String, String>();
 
-	public static ArrayList hashIPandPort() throws NoSuchAlgorithmException {
-		try {
-			FileReader in = new FileReader(path);
-			BufferedReader br = new BufferedReader(in);
-			ArrayList hashed = new ArrayList();
-			match = new Hashtable<String, String>();
-
-			String line;
-			while ((line = br.readLine()) != null) {
-				hashed.add(SHA1(line));
-				match.put(SHA1(line), line);
-			}
-			in.close();
-			Collections.sort(hashed);
-			return hashed;
+            String line;
+            while ((line = br.readLine()) != null) {
+                hashed.add(SHA1(line));
+                match.put(SHA1(line), line);
+            }
+            in.close();
+            Collections.sort(hashed);
+            return hashed;
 		} catch (IOException e) {
 			System.out.println("File Read Error");
 			return null;
 		}
 	}
 
-	public static String SHA1(String s) throws NoSuchAlgorithmException {
+    public static String SHA1(String s) throws NoSuchAlgorithmException {
 		MessageDigest mDigest = MessageDigest.getInstance("SHA-1");
 		mDigest.update(s.getBytes(), 0, s.length());
 		return new BigInteger(1, mDigest.digest()).toString();
 	}
+
+    public static int countLinesNew(String filename) throws IOException {
+        return consumer.countLines(filename);
+    }
 
 	private class myThread extends Thread {
 		Socket socket;
@@ -239,17 +197,17 @@ public class broker {
 			}
 
 			try {
-	            in.close();
-	            out.close();
-	            this.socket.close();
-	            p_in.close();
-	            p_out.close();
-	            p1_in.close();
-	            p1_out.close();
-	            p2_in.close();
-	            p2_out.close();
-	            requestSocket1.close();
-	            requestSocket2.close();
+                if (in != null) in.close();
+                if (out != null) out.close();
+                if (this.socket != null) this.socket.close();
+                if (p_in != null) p_in.close();
+                if (p_out != null) p_out.close();
+                if (p1_in != null) p1_in.close();
+                if (p1_out != null) p1_out.close();
+                if (p2_in != null) p2_in.close();
+                if (p2_out != null) p2_out.close();
+                if (requestSocket1 != null) requestSocket1.close();
+                if (requestSocket2 != null) requestSocket2.close();
 	        } catch (IOException e) {
 	            e.printStackTrace();
 	        }

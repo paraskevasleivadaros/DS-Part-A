@@ -5,7 +5,7 @@ import java.util.Scanner;
 
 public class consumer {
 
-	private static String IP = "192.168.1.7";
+	private static String IP = "192.168.1.140";
 	private static String path2 = Paths.get("busLinesNew.txt").toAbsolutePath().toString();
 	private static String bus;
 	private static String[] busLines;
@@ -102,47 +102,11 @@ public class consumer {
 				
 				out.println(bus);
 				
-				//int i=0;
-				
 				in.nextLine();
 				
 				do {
 					System.out.println(in.nextLine());
-					//i++;
-					//if(i==10) break;
 				} while (in.nextLine().compareTo("stop") != 0);
-				
-				/*Scanner in2 = null;
-				
-				String cons_msg;
-
-				System.out.println("Give me the number of the bus you are interested for :");
-				//cons_msg = in2.nextLine();
-				cons_msg = "824";
-				
-				out.println(cons_msg);
-				
-				int i=0;
-				
-				do {
-					System.out.println(in.nextLine());
-					i++;
-					if(i==10) break;
-				} while (in.nextLine().compareTo("stop") != 0);
-				
-				System.out.println("Yo");
-				
-				cons_msg = "825";
-				
-				out.println(cons_msg);
-				
-				i=0;
-				
-				do {
-					System.out.println(in.nextLine());
-					i++;
-					if(i==10) break;
-				} while (in.nextLine().compareTo("stop") != 0);*/
 
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -156,6 +120,13 @@ public class consumer {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public void startClient() throws IOException {
+		Socket requestSocket = null;
+
+		requestSocket = new Socket(IP, 3421);
+		new myThread(requestSocket).start();
 	}
 
 	static int countLines(String filename) throws IOException {
@@ -195,12 +166,5 @@ public class consumer {
 		} finally {
 			is.close();
 		}
-	}
-
-	public void startClient() throws IOException {
-		Socket requestSocket = null;
-
-		requestSocket = new Socket(IP, 3421);
-		new myThread(requestSocket).start();
 	}
 }
