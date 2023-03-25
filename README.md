@@ -37,3 +37,6 @@ java publisher 2
 
 cd C:\Users\paras\IdeaProjects\DS-Part-A\src<br>
 java consumer 021
+
+## Copyright & License
+[MIT](https://github.com/paraskevasleivadaros/DS-Part-A/blob/master/LICENSE)
