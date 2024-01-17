@@ -14,7 +14,7 @@ Find your IP(Wi-FI):
 2. Then scroll down to the Properties section to see the IP address of the device.
 
 Με την παρακάτω σειρά τα τρέχουμε και σε διαφορετικό cmd το καθένα:<br>
-
+```bash
 cd C:\Users\paras\IdeaProjects\DS-Part-A\src<br>
 javac broker.java<br>
 javac publisher.java<br>
@@ -37,6 +37,7 @@ java publisher 2
 
 cd C:\Users\paras\IdeaProjects\DS-Part-A\src<br>
 java consumer 021
+```
 
 ### 🛠️ Tech Stack
 [![Bash](https://skills.thijs.gg/icons?i=bash)](https://gnu.org/software/bash/)
