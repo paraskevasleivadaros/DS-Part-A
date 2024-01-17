@@ -38,5 +38,9 @@ java publisher 2
 cd C:\Users\paras\IdeaProjects\DS-Part-A\src<br>
 java consumer 021
 
-## Copyright & License
+### 🛠️ Tech Stack
+[![Bash](https://skills.thijs.gg/icons?i=bash)](https://gnu.org/software/bash/)
+[![Java](https://skills.thijs.gg/icons?i=java)](https://oracle.com/java/)
+
+### ©️ Copyright & License
 [MIT](https://github.com/paraskevasleivadaros/DS-Part-A/blob/master/LICENSE)
