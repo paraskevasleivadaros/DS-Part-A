@@ -42,6 +42,3 @@ java consumer 021
 ### 🛠️ Tech Stack
 [![Bash](https://skills.thijs.gg/icons?i=bash)](https://gnu.org/software/bash/)
 [![Java](https://skills.thijs.gg/icons?i=java)](https://oracle.com/java/)
-
-### ©️ Copyright & License
-[MIT](https://github.com/paraskevasleivadaros/DS-Part-A/blob/master/LICENSE)
